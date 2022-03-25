@@ -3,7 +3,6 @@
 # platform: osx-arm64
 autopep8=1.6.0=pyhd8ed1ab_1
 ca-certificates=2021.10.8=h4653dfc_0
-cython=0.29.24=pypi_0
 libblas=3.9.0=12_osxarm64_openblas
 libcblas=3.9.0=12_osxarm64_openblas
 libcxx=12.0.1=h168391b_0
@@ -17,9 +16,7 @@ ncurses=6.2=h9aa5885_4
 numpy=1.21.3=py39h1f3b974_0
 openssl=3.0.0=h3422bc3_1
 pandas=1.2.5=py39h7f752ed_0
-pip=21.3.1=pyhd8ed1ab_0
 pycodestyle=2.8.0=pyhd8ed1ab_0
-python=3.9.7=hc0da0df_3_cpython
 python-dateutil=2.8.2=pyhd8ed1ab_0
 python_abi=3.9=2_cp39
 pytz=2021.3=pyhd8ed1ab_0
