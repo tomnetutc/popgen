@@ -47,7 +47,8 @@ class Config(object):
         try:
             value = self._data[key]
         except KeyError as e:
-            raise ConfigError("Key - %s doesn't exist in the YAML configuration" % key)
+            raise ConfigError(
+                "Key - %s doesn't exist in the YAML configuration" % key)
         return value
 
     def __len__(self):

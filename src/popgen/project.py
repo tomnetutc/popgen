@@ -43,7 +43,8 @@ class Project(object):
 
     def _populate_project_properties(self):
         self.name = self._config.project.name  # Get project name
-        self.location = os.path.abspath(self._config.project.location)  # Get Absolute location
+        self.location = os.path.abspath(
+            self._config.project.location)  # Get Absolute location
 
     def _load_data(self):
         self.db = DB(self._config)  #
@@ -86,8 +87,6 @@ class Scenario(object):
         self.db.enumerate_geo_ids_for_scenario(self.scenario_config)
         # self.db.enumerate_sample_geo_ids_for_scenario(self.scenario_config)
 
-
-
     def _run_ipf(self):
         self.run_ipf_obj = Run_IPF(
             self.entities, self.housing_entities, self.column_names_config, self.scenario_config, self.db
@@ -104,7 +103,8 @@ class Scenario(object):
             self.entities, self.column_names_config, self.scenario_config, self.db
         )
         self.run_reweighting_obj.create_ds()
-        self.run_reweighting_obj.run_reweighting(self.run_ipf_obj.region_constraints, self.run_ipf_obj.geo_constraints)
+        self.run_reweighting_obj.run_reweighting(
+            self.run_ipf_obj.region_constraints, self.run_ipf_obj.geo_constraints)
         ("Reweighting completed in: %.4f" % (time.time() - self.t))
 
     def _draw_sample(self):

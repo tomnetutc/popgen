@@ -44,7 +44,8 @@ class DB(object):
         self.geo_marginals = self.get_data(geo_marginals_config, header=[0, 1])
 
         region_marginals_config = self._inputs_config.location.marginals.region
-        self.region_marginals = self.get_data(region_marginals_config, header=[0, 1])
+        self.region_marginals = self.get_data(
+            region_marginals_config, header=[0, 1])
 
         self._enumerate_geo_ids()
 
@@ -54,16 +55,18 @@ class DB(object):
         for item in config_dict:
             filename = config_dict[item]
             full_location = os.path.join(self.location, filename)
-            data_dict[item] = pd.read_csv(full_location, index_col=0, header=header)
-            data_dict[item].loc[:, data_dict[item].index.name] = data_dict[item].index.values
+            data_dict[item] = pd.read_csv(
+                full_location, index_col=0, header=header)
+            data_dict[item].loc[:,
+                                data_dict[item].index.name] = data_dict[item].index.values
         return data_dict
 
     def _enumerate_geo_ids(self):
         geo_to_sample = self.geo["geo_to_sample"]
         self.geo_ids_all = geo_to_sample.index.tolist()
         self.sample_geo_ids = np.unique(geo_to_sample[self._inputs_config
-                                                     .column_names
-                                                     .sample_geo].values)
+                                                      .column_names
+                                                      .sample_geo].values)
         region_to_geo = self.geo["region_to_geo"]
         self.region_ids_all = np.unique(region_to_geo.index.values).tolist()
 
@@ -73,7 +76,8 @@ class DB(object):
     def get_geo_ids_for_region(self, region_id):
         geo_name = self._inputs_config.column_names.geo
 
-        geoids = self.geo["region_to_geo"].loc[region_id, geo_name].copy().tolist()
+        geoids = self.geo["region_to_geo"].loc[region_id,
+                                               geo_name].copy().tolist()
         if isinstance(geoids, list):
             return geoids
         else:
@@ -108,7 +112,8 @@ class DB(object):
             self.region_ids = scenario_config.geos_to_synthesize.region.ids
             self.sample_geo_ids = []
             for region_id in self.region_ids:
-                self.sample_geo_ids += self.get_sample_geo_ids_for_region(region_id)
+                self.sample_geo_ids += self.get_sample_geo_ids_for_region(
+                    region_id)
         except ConfigError as e:
             print("KeyError", e)
             # self.geo_ids = self.geo_ids_all
@@ -118,7 +123,8 @@ class DB(object):
     def return_variables_cats(self, entity, variable_names):
         variables_cats = {}
         for variable_name in variable_names:
-            variables_cats[variable_name] = self.return_variable_cats(entity, variable_name)
+            variables_cats[variable_name] = self.return_variable_cats(
+                entity, variable_name)
         return variables_cats
 
     def return_variable_cats(self, entity, variable_name):

@@ -119,7 +119,7 @@ class Draw_Population(object):
         geo_id_synthetic = geo_id_synthetic.join(
             geo_id_constraints, how="inner")
         (geo_id_synthetic["synthetic_count"],
-              geo_id_synthetic["constraint"])
+         geo_id_synthetic["constraint"])
         stat, p_value = stats.chisquare(
             geo_id_synthetic["synthetic_count"], geo_id_synthetic["constraint"])
         return stat, p_value

@@ -78,10 +78,13 @@ class IPF(object):
 
     def _correct_zero_cell_issue(self):
         if self.seed.shape[0] != self.seed_all.shape[0]:
-            self.seed_all["prob"] = self.seed["frequency"] / self.seed["frequency"].sum()
+            self.seed_all["prob"] = self.seed["frequency"] / \
+                self.seed["frequency"].sum()
             null_rows = self.seed_all["prob"].isnull()
-            self.seed_all["prob_all"] = self.seed_all["frequency"] / self.seed_all["frequency"].sum()
-            self.seed_all.loc[null_rows, "prob"] = self.seed_all.loc[null_rows, "prob_all"]
+            self.seed_all["prob_all"] = self.seed_all["frequency"] / \
+                self.seed_all["frequency"].sum()
+            self.seed_all.loc[null_rows,
+                              "prob"] = self.seed_all.loc[null_rows, "prob_all"]
             borrowed_sum = self.seed_all.loc[null_rows, "prob"].sum()
             adjustment = 1 - borrowed_sum
             self.seed_all.loc[~null_rows, "prob"] *= adjustment
@@ -109,7 +112,8 @@ class IPF(object):
 
                 if (self.frequencies == 0).any():
                     cells_zero_values = self.frequencies == 0
-                    self.frequencies[cells_zero_values] = np.finfo(np.float64).tiny
+                    self.frequencies[cells_zero_values] = np.finfo(
+                        np.float64).tiny
 
     def _check_convergence(self):
         average_diff = self._calculate_average_deviation()
@@ -137,7 +141,8 @@ class IPF(object):
                 original_frequency = self.marginals.loc[(var, "%s" % cat)]
                 if original_frequency == 0:
                     original_frequency = self.zero_marginal_correction
-            diff_sum += np.abs(adjusted_frequency - original_frequency) / original_frequency
+            diff_sum += np.abs(adjusted_frequency -
+                               original_frequency) / original_frequency
         average_diff = diff_sum / self.variables_cats_count
         #  "Average Deviation", average_diff
         return average_diff
@@ -165,7 +170,8 @@ class Run_IPF(object):
             self.region_iters_convergence_dict,
             self.region_average_diffs_dict,
         ) = self._run_ipf_for_resolution(region_marginals, region_controls_config, region_ids, region_to_sample)
-        self.region_columns_dict = self._get_columns_constraints_dict(self.region_constraints_dict)
+        self.region_columns_dict = self._get_columns_constraints_dict(
+            self.region_constraints_dict)
 
         geo_marginals = self.db.geo_marginals
         geo_controls_config = self.scenario_config.control_variables.geo
@@ -177,10 +183,12 @@ class Run_IPF(object):
             self.geo_iters_convergence_dict,
             self.geo_average_diffs_dict,
         ) = self._run_ipf_for_resolution(geo_marginals, geo_controls_config, geo_ids, geo_to_sample)
-        self.geo_columns_dict = self._get_columns_constraints_dict(self.geo_constraints_dict)
+        self.geo_columns_dict = self._get_columns_constraints_dict(
+            self.geo_constraints_dict)
 
         if self.ipf_rounding == "bucket":
-            self.geo_frequencies = self._get_frequencies_for_resolution(geo_ids, self.geo_constraints_dict, "bucket")
+            self.geo_frequencies = self._get_frequencies_for_resolution(
+                geo_ids, self.geo_constraints_dict, "bucket")
 
     def _run_ipf_for_resolution(self, marginals_at_resolution, control_variables_config, geo_ids, geo_corr_to_sample):
         constraints_list = []
@@ -197,9 +205,11 @@ class Run_IPF(object):
             if len(variable_names) == 0:
                 continue
 
-            variables_cats = self.db.return_variables_cats(entity, variable_names)
+            variables_cats = self.db.return_variables_cats(
+                entity, variable_names)
             variables_count = len(variable_names)
-            variables_cats_count = sum([len(cats) for cats in list(variables_cats.values())])
+            variables_cats_count = sum(
+                [len(cats) for cats in list(variables_cats.values())])
             (seed_geo, seed_all, row_idx) = self._create_ds_for_resolution_entity(
                 sample, entity, variable_names, variables_count, variables_cats, self.sample_geo_name
             )
@@ -221,16 +231,19 @@ class Run_IPF(object):
             iters_convergence[entity] = iters_convergence
             average_diffs_dict[entity] = average_diffs
             constraints_list.append(constraints)
-        constraints_resolution = self._get_stacked_constraints(constraints_list)
+        constraints_resolution = self._get_stacked_constraints(
+            constraints_list)
         return (constraints_resolution, constraints_dict, iters_convergence_dict, average_diffs_dict)
 
     def _create_ds_for_resolution_entity(
         self, sample, entity, variable_names, variables_count, variables_cats, sample_geo_names
     ):
-        ipf_ds_geo = IPF_DS(sample, entity, variable_names, variables_count, variables_cats, sample_geo_names)
+        ipf_ds_geo = IPF_DS(sample, entity, variable_names,
+                            variables_count, variables_cats, sample_geo_names)
         seed_geo = ipf_ds_geo.get_seed()
 
-        ipf_ds_all = IPF_DS(sample, entity, variable_names, variables_count, variables_cats)
+        ipf_ds_all = IPF_DS(sample, entity, variable_names,
+                            variables_count, variables_cats)
 
         seed_all = ipf_ds_all.get_seed()
         row_idx = ipf_ds_all.get_row_idx(seed_all)
@@ -255,10 +268,12 @@ class Run_IPF(object):
         ipf_avgerage_diffs = pd.DataFrame(index=["average_percent_deviation"])
         for geo_id in geo_ids:
             #  "\tIPF for Geo: %s for Entity: %s" % (geo_id, entity)
-            sample_geo_id = geo_corr_to_sample.loc[geo_id, self.sample_geo_name]
+            sample_geo_id = geo_corr_to_sample.loc[geo_id,
+                                                   self.sample_geo_name]
             if isinstance(sample_geo_id, pd.Series):
                 seed_geo_levels_list = list(range(len(seed_geo.index.names)))
-                seed_for_geo_id = seed_geo.loc[sample_geo_id.tolist()].sum(level=seed_geo_levels_list[1:])
+                seed_for_geo_id = seed_geo.loc[sample_geo_id.tolist()].sum(
+                    level=seed_geo_levels_list[1:])
                 #  (seed_geo.loc[sample_geo_id.tolist()])
                 #  sample_geo_id.tolist(), "Satisfied series check"
             # if sample_geo_id.shape[0] >= 1:
@@ -294,7 +309,8 @@ class Run_IPF(object):
             #  ('\t', ipf_obj_geo.iter_convergence,
             #         ipf_obj_geo.average_diff_iters)
             if (ipf_results[geo_id] == 0).any():
-                raise Exception("""IPF cell values of zero are returned. """ """Needs troubleshooting""")
+                raise Exception(
+                    """IPF cell values of zero are returned. """ """Needs troubleshooting""")
 
             # ipf_results[geo_id] = ipf_results_geo["frequency"]
             # raw_input("IPF for Geo: %s for Entity: %s complete"
@@ -320,13 +336,15 @@ class Run_IPF(object):
                 stacked_constraints = constraint.T.join(stacked_constraints)
         stacked_constraints.sort_index(axis=1, inplace=True)
 
-        stacked_constraints.columns = pd.Index(stacked_constraints.columns, tupleize_cols=False)
+        stacked_constraints.columns = pd.Index(
+            stacked_constraints.columns, tupleize_cols=False)
         return stacked_constraints
 
     def _get_columns_constraints_dict(self, constraints_dict):
         columns_constraints_dict = {}
         for entity, constraints in constraints_dict.items():
-            columns_constraints_dict[entity] = constraints.index.values.tolist()
+            columns_constraints_dict[entity] = constraints.index.values.tolist(
+            )
         #  columns_constraints_dict
         return columns_constraints_dict
 
@@ -357,5 +375,6 @@ class Run_IPF(object):
                 frequencies.loc[:, geo_id] = adjusted_frequency_geo
 
             frequencies_list.append(frequencies)
-        frequencies_resolution = self._get_stacked_constraints(frequencies_list)
+        frequencies_resolution = self._get_stacked_constraints(
+            frequencies_list)
         return frequencies_resolution
